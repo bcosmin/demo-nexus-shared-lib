@@ -1,6 +1,6 @@
 // Demo pipeline showcasing a production-grade configuration of the nexusPipeline from the 'nexus-shared-lib' Jenkins shared library.
 
-@Library('nexus-shared-lib@v0.0.1') _ 
+@Library('nexus-shared-lib@v0.0.3') _ 
 
 // This Jenkinsfile demonstrates the full capabilities of the nexusPipeline
 // provided by the 'nexus-shared-lib', incorporating security guards, containerization,
