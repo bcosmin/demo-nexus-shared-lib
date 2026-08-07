@@ -1,77 +1,68 @@
-// Demo pipeline showcasing all features of the nexusPipeline from the 'nexus-shared-lib' Jenkins shared library.
+// Demo pipeline showcasing a production-grade configuration of the nexusPipeline from the 'nexus-shared-lib' Jenkins shared library.
 
-@Library('nexus-shared-lib') _ 
+@Library('nexus-shared-lib@v0.0.1') _ 
 
 // This Jenkinsfile demonstrates the full capabilities of the nexusPipeline
-// provided by the 'nexus-shared-lib'.
-// It enables all feature toggles and provides example configurations
-// for S3, Docker, security whitelisting, and custom extension points.
+// provided by the 'nexus-shared-lib', incorporating security guards, containerization,
+// Artifactory integration, Kubernetes deployment, multi-channel notifications,
+// and custom extension hooks for lifecycle management.
 
 nexusPipeline(
     // --- Project Metadata ---
-    projectName: 'demo nexus pipeline', // Custom project name for display and logging
-    environment: 'development', // Can be 'development', 'staging', 'production', etc.
+    projectName: 'enterprise-microservice-demo', // Custom project name for display and logging
+    environment: 'production',                 // Target deployment environment
 
-    // --- Feature Toggles (set to true to enable all features for this example) ---
+    // --- Feature Toggles ---
     runSecurityScan: true,
-    optimizeCosts: false, // Cost optimization is disabled in this demo to focus on other features
-    uploadArtifactsToS3: true,
-    uploadToArtifactory: false, // Artifactory upload is disabled in this demo to focus on S3 and Docker features
+    runAdvancedSecurityGuard: true,
     buildAndPushDocker: true,
-    sendEmailNotifications: true,
+    uploadToArtifactory: true,
+    deployToK8s: true,
 
-    // --- AWS S3 Configuration (only relevant if uploadArtifactsToS3 is true) ---
-    s3Bucket: 'my-full-featured-app-artifacts', // Overrides default 'my-default-bucket'
-    awsRegion: 'eu-central-1',                 // Overrides default 'us-east-1'
-    awsCredentialsId: 'my-aws-jenkins-creds',  // Jenkins Credential ID for AWS access
+    // --- Docker Configuration ---
+    dockerRegistry: 'registry.company.io',
+    dockerImageName: 'nexus/enterprise-microservice',
+    dockerCredentialsId: 'docker-registry-credentials',
 
-    // --- JFrog Artifactory Configuration (only relevant if uploadToArtifactory is true) ---
-    artifactoryServerId: 'my-jfrog-server',        // Overrides default 'jfrog-enterprise-server'
-    artifactoryTargetRepo: 'my-app-libs-local',    // Overrides default 'generic-local'
-    artifactoryCredentialsId: 'my-jfrog-creds',    // Jenkins Credential ID for Artifactory access
-    artifactoryPattern: 'build/libs/*.jar',        // Pattern for files to upload (Overrides default '**/*')
+    // --- JFrog Artifactory Configuration ---
+    artifactoryServerId: 'my-jfrog-server',        // JFrog server ID
+    artifactoryTargetRepo: 'libs-release-local',   // Target repository
+    artifactoryCredentialsId: 'my-jfrog-creds',    // Jenkins credential ID
 
-    // --- Docker Configuration (only relevant if buildAndPushDocker is true) ---
-    dockerRegistry: 'my.private.docker.registry.com', // Example private registry
-    dockerCredentialsId: 'my-docker-jenkins-creds',   // Jenkins Credential ID for Docker registry login
-    dockerImageName: 'my-full-featured-app-image',    // Custom image name
+    // --- Kubernetes / Helm Deployment ---
+    helmReleaseName: 'enterprise-microservice',
+    helmChartPath: './charts/enterprise-microservice',
+    helmNamespace: 'production',
 
+    // --- Multi-Channel Notifications ---
+    notificationEmail: 'devops-alerts@company.com',
+    slackChannel: '#deployments',
 
     // --- Security Whitelist Configuration ---
     // List of CVE IDs or secret hashes to be ignored by the SecurityGuard
     securityWhitelist: [
-        'CVE-2023-12345', // Example whitelisted CVE
-        'sh-abcdef1234567890' // Example whitelisted secret hash
+        'CVE-2023-12345',
+        'sh-abcdef1234567890'
     ],
 
-    // --- Extension Points (Closures for custom logic at various pipeline stages) ---
-    // These closures are executed within the pipeline context, allowing access to 'sh', 'echo', etc.
-
+    // --- Extension Points (Closures for custom lifecycle hooks) ---
     beforeBuild: {
-        echo "--> Custom step: Running pre-build checks and installing dependencies..."
-        // Example: Install Node.js dependencies
-        // sh 'npm install'
-        // Example: Run unit tests
-        // sh 'npm test'
+        echo "--> Custom step [beforeBuild]: Setting up private NPM registries and downloading secure dependencies..."
+        // sh 'npm ci'
     },
 
     afterBuild: {
-        echo "--> Custom step: Performing post-build artifact verification..."
-        // Example: Check build output for expected files
-        // sh 'ls -l target/*.jar'
+        echo "--> Custom step [afterBuild]: Archiving test results and running custom static analysis..."
+        // junit 'build/test-results/**/*.xml'
     },
 
     beforeDeploy: {
-        echo "--> Custom step: Preparing deployment environment and running infrastructure checks..."
-        // Example: Terraform plan
-        // sh 'terraform plan -out=tfplan'
+        echo "--> Custom step [beforeDeploy]: Validating Kubernetes cluster health and database migration status..."
+        // sh 'kubectl cluster-info'
     },
 
     afterDeploy: {
-        echo "--> Custom step: Executing post-deployment integration and smoke tests..."
-        // Example: Hit a health endpoint
-        // sh 'curl -f http://my-full-featured-app.example.com/health || error "Application health check failed!"'
-        // Example: Clean up temporary deployment files
-        // sh 'rm -rf /tmp/deployment-artifacts'
+        echo "--> Custom step [afterDeploy]: Running end-to-end smoke tests and triggering cache invalidation..."
+        // sh 'curl -f https://api.company.io/healthz || error "Health check failed post-deployment!"'
     }
 )
