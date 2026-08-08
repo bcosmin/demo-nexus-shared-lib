@@ -1,6 +1,6 @@
 // Demo pipeline showcasing a production-grade configuration of the nexusPipeline from the 'nexus-shared-lib' Jenkins shared library.
 
-@Library('nexus-shared-lib@v0.0.5') _ 
+@Library('nexus-shared-lib@main') _ 
 
 // This Jenkinsfile demonstrates the full capabilities of the nexusPipeline
 // provided by the 'nexus-shared-lib', incorporating security guards, containerization,
@@ -9,15 +9,15 @@
 
 nexusPipeline(
     // --- Project Metadata ---
-    projectName: 'enterprise-microservice-demo', // Custom project name for display and logging
-    environment: 'production',                 // Target deployment environment
+    projectName: 'nexus-demo', // Custom project name for display and logging
+    environment: 'demo',                 // Target deployment environment
 
     // --- Feature Toggles ---
-    runSecurityScan: true,
-    runAdvancedSecurityGuard: true,
-    buildAndPushDocker: true,
-    uploadToArtifactory: true,
-    deployToK8s: true,
+    runSecurityScan: false,
+    runAdvancedSecurityGuard: false,
+    buildAndPushDocker: false,
+    uploadToArtifactory: false,
+    deployToK8s: false,
 
     // --- Docker Configuration ---
     dockerRegistry: 'registry.company.io',
@@ -35,8 +35,14 @@ nexusPipeline(
     helmNamespace: 'production',
 
     // --- Multi-Channel Notifications ---
-    notificationEmail: 'devops-alerts@company.com',
-    slackChannel: '#deployments',
+    sendEmailNotifications: false,
+    notificationEmail: '',
+
+    sendSlackNotification: false,
+    slackChannel: '',
+
+    sendTeamsNotification: false,
+    teamsWebhookUrl: '',
 
     // --- Security Whitelist Configuration ---
     // List of CVE IDs or secret hashes to be ignored by the SecurityGuard
