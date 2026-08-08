@@ -18,7 +18,6 @@ nexusPipeline(
     buildAndPushDocker: false,
     uploadToArtifactory: false,
     deployToK8s: false,
-    sendEmailNotifications: false,
 
     // --- Docker Configuration ---
     dockerRegistry: 'registry.company.io',
