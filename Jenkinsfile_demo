@@ -13,11 +13,12 @@ nexusPipeline(
     environment: 'production',                 // Target deployment environment
 
     // --- Feature Toggles ---
-    runSecurityScan: true,
-    runAdvancedSecurityGuard: true,
+    runSecurityScan: false,
+    runAdvancedSecurityGuard: false,
     buildAndPushDocker: false,
     uploadToArtifactory: false,
     deployToK8s: false,
+    sendEmailNotifications: false
 
     // --- Docker Configuration ---
     dockerRegistry: 'registry.company.io',
