@@ -9,8 +9,8 @@
 
 nexusPipeline(
     // --- Project Metadata ---
-    projectName: 'enterprise-microservice-demo', // Custom project name for display and logging
-    environment: 'production',                 // Target deployment environment
+    projectName: 'nexus-demo', // Custom project name for display and logging
+    environment: 'demo',                 // Target deployment environment
 
     // --- Feature Toggles ---
     runSecurityScan: false,
