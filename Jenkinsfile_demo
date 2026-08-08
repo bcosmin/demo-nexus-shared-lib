@@ -36,8 +36,14 @@ nexusPipeline(
     helmNamespace: 'production',
 
     // --- Multi-Channel Notifications ---
-    notificationEmail: 'devops-alerts@company.com',
-    slackChannel: '#deployments',
+    sendEmailNotifications: false,
+    notificationEmail: '',
+
+    sendSlackNotification: false,
+    slackChannel: '',
+
+    sendTeamsNotification: false,
+    teamsWebhookUrl: '',
 
     // --- Security Whitelist Configuration ---
     // List of CVE IDs or secret hashes to be ignored by the SecurityGuard
